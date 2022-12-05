@@ -1,1 +1,318 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v4.js"></script>
 
+<head>
+  <h1 class="header">WEATHER SENTIMENT</h1>                                                      
+</head>
+
+<h4> This application pulls data from the National Weather Service to determine and summarize 
+  weather observations from the last 7 days in a selected city.<br> It then uses the Twitter API to pull data from
+  tweets from the last 7 days about the weather in that city, then analyzes the sentiment of those tweets.
+ </h4>
+
+<style>
+
+h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  font-family: Helvetica, sans-serif;
+  font-weight: bold;
+  color: #48CBE1;
+  margin: 10px;
+  height: 100px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-color: #333333;
+}
+
+h2 {
+  font-size: 30px;
+  font-family: Helvetica, sans-serif;
+}
+
+h4 {
+  text-align: center;
+  font-family: Helvetica, sans-serif;
+}
+
+form {
+  text-align: center;
+}
+
+label {
+  font-family: Helvetica, sans-serif;
+}
+
+p {
+  font-weight: bold;
+  font-size: 15px;
+  font-family: Helvetica, sans-serif
+}
+
+option {
+  font-size: 14px;
+  font-family: Helvetica, sans-serif
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+}
+
+text {
+  font: 10px sans-serif;
+}
+
+input[type=submit] {
+  font-size: 16px;
+  font-family: Helvetica, sans-serif;
+}
+
+.dropdown {
+  font-size: 16px;
+  font-family: Helvetica, sans-serif
+}
+
+.largebr {
+  display: block;
+  margin: 4px 0;
+}
+
+.left-div {
+  float:left;
+  height: 600px;
+  width: 770px;
+  
+}
+.right-div {
+  float:left;
+  height: 600px;
+  width: 770px;
+}
+
+.results {
+  display: grid;
+  grid-gap: 40px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "wobs twit"
+    "wobs twit"
+    "wobs twit";
+  background-color: #fff;
+  margin-top: 20px;
+}
+
+.box {
+  background-color: #444;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.wobs {
+  background-color: #fff3e8;
+  margin-left: 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.twit {
+  background-color: #e6f2ff;
+  margin-right: 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+</style>
+
+<form method="post">
+  <select class="dropdown" name="City_field" id="city">
+    <option disabled selected value> -- Select City -- </option>
+    <option value="New York">New York</option>
+    <option value="Los Angeles">Los Angeles</option>
+    <option value="Chicago">Chicago</option>
+    <option value="Washington DC">Washington DC</option>
+    <option value="San Francisco">San Francisco</option>
+    <option value="Boston">Boston</option>
+    <option value="Dallas">Dallas</option>
+    <option value="Houston">Houston</option>
+    <option value="Philadelphia">Philadelphia</option>
+    <option value="Atlanta">Atlanta</option>
+    <option value="Miami">Miami</option>
+    <option value="Detroit">Detroit</option>
+    <option value="Phoenix">Phoenix</option>
+    <option value="Seattle">Seattle</option>
+    <option value="Orlando">Orlando</option>
+    <option value="Minneapolis">Minneapolis</option>
+    <option value="Denver">Denver</option>
+    <option value="Cleveland">Cleveland</option>
+    <option value="San Diego">San Diego</option>
+    <option value="Portland">Portland</option>
+    <option value="Tampa">Tampa</option>
+    <option value="St Louis">St Louis</option>
+    <option value="Charlotte">Charlotte</option>
+    <option value="Salt Lake">Salt Lake</option>
+    <option value="Sacramento">Sacramento</option>
+  </select>
+  <input type="submit" name="Btn" value="Submit" />
+  <br>
+  <label>Current City: {{CityName}}</label>
+</form>
+
+<div class="results">
+  <div class="box wobs">
+    <div>
+      <h2>Weather Observations</h2>
+    </div>
+    <div class='obs'>
+      <p id="weathervals"></p>
+    </div>
+    <div class="left-div" id="graphDiv" style="border: thin solid black"></div>
+  </div>
+  <div class='box twit'>
+    <div>
+      <h2>Twitter Sentiment</h2>
+    </div>
+    <div class='sent'>
+      <p id="sentvals"></p>
+    </div>
+    <div class="right-div" id="graphDiv2" style="border: thin solid black"></div>
+  </div>
+</div>
+
+<script >
+  // Fill in text data
+  d3.json("/get-wv-data", function(data) {
+    document.getElementById("weathervals").innerHTML = data.values.join("<br class='largebr'>");
+  })
+  d3.json("/get-sv-data", function(data) {
+    document.getElementById("sentvals").innerHTML = 
+      `Compound Sentiment: ${data.values[0]}<br class='largebr'>Positive: ${data.values[1]}%
+      <br class='largebr'>Neutral: ${data.values[2]}%<br class='largebr'>Negative: ${data.values[3]}%`;
+  })
+</script>
+
+<script >
+// Create bar chart 1
+var margin  = {top: 40, right: 35, bottom: 40, left: 85},
+    width   = 770 - margin.left - margin.right,
+    height  = 600 - margin.top - margin.bottom,
+    y       = d3.scaleBand().range([0,height]).padding(0.5),
+    x       = d3.scaleLinear().range([0,width]);
+var xAxis = d3.axisBottom(x)
+  .tickFormat(function(d){
+    return d;
+  }).ticks(10)
+var yAxis = d3.axisLeft(y);
+var svg1 = d3.select("#graphDiv")
+  .append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Parse the Data
+d3.json("/get-wo-data", function(data) {
+
+  // Add axes
+x.domain([0, d3.max(data, function(d){
+  return d.weight;
+})]);
+
+y.domain(data.map(function(d){
+  return d.name;
+}));
+
+svg1.append("g")
+  .attr("transform", "translate(0, " + height + ")")
+  .call(xAxis)
+
+svg1.append("g")
+  .call(yAxis)
+
+// Add title label
+svg1.append("text").attr("x", (width / 2))             
+  .attr("y", 0 - (margin.top / 2))
+  .attr("text-anchor", "middle")  
+  .style("font-size", "16px") 
+  .text("Weather Descriptions by Frequency"); 
+
+
+svg1.selectAll(".bar")
+  .data(data)
+  .enter()
+  .append("rect")
+  .style("fill", "darkgreen")
+  .attr("x", x(0))
+  .attr("y", function(d) { return y(d.name); })
+  .attr("width", function(d) { return x(d.weight); })
+  .attr('height', y.bandwidth())
+})
+</script>
+
+<script>
+// Create bar chart 2
+var margin  = {top: 40, right: 35, bottom: 40, left: 85},
+    width   = 770 - margin.left - margin.right,
+    height  = 600 - margin.top - margin.bottom,
+    y       = d3.scaleBand().range([0,height]).padding(0.5),
+    x       = d3.scaleLinear().range([0,width]);
+var xAxis = d3.axisBottom(x)
+.tickFormat(function(d){
+return d;
+}).ticks(10)
+var yAxis = d3.axisLeft(y);
+var svg2 = d3.select("#graphDiv2")
+  .append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Parse the Data
+d3.json("/get-tt-data", function(data) {
+
+console.log(data);
+
+// Get Top Elements
+data=data.slice(0, 25);
+console.log(data);
+
+// Add axes
+x.domain([0, d3.max(data, function(d){
+  return d.weight;
+})]);
+
+y.domain(data.map(function(d){
+  return d.name;
+}));
+
+svg2.append("g")
+  .attr("transform", "translate(0, " + height + ")")
+  .call(xAxis)
+
+svg2.append("g")
+  .call(yAxis)
+
+// Add title label
+svg2.append("text").attr("x", (width / 2))             
+  .attr("y", 0 - (margin.top / 2))
+  .attr("text-anchor", "middle")  
+  .style("font-size", "16px") 
+  .text("Most Frequent Tweet Terms"); 
+
+svg2.selectAll(".bar")
+  .data(data)
+  .enter()
+  .append("rect")
+  .style("fill", "darkgreen")
+  .attr("class", "bar")
+  .attr("x", x(0))
+  .attr("y", function(d) { return y(d.name); })
+  .attr("width", function(d) { return x(d.weight); })
+  .attr('height', y.bandwidth())   
+})
+
+</script>  
+
+</html>
