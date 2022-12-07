@@ -1,12 +1,9 @@
 # CS 410 Final Project
 
 This project was created to analyze local sentiment about weather in selected cities,
-using both the Twitter API and National Weather Service API. This project can be run using
-the Flask framework.
+using both the Twitter API and National Weather Service API. This project leverages Flask and D3.js.
 
-IMPORTANT NOTE: To access the Twitter API, a file named 'bearer_token.txt' must be added to the root
-project folder and must contain only a bearer token from Twitter, which can be easily generated on
-developer.twitter.com. This application is not a heavy user of data, it only generates one request to the Twitter API for every submission from the app, but be aware of rate limits regardless.
+In order to run the application, you need Python and Node/NPM installed on your machine.
 
 Project was created using:
 
@@ -14,34 +11,34 @@ Python 3.10.5
 Node 19.2.0
 NPM 8.9.13
 
-For information on installing Node and NPM you can find information here:
+For information on installing Node and NPM you can look here:
 
 https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
 
-To clone repository run the following from command line:
+Keep in mind a Node version needs to be activated after installing, otherwise the npm command will not work.
+
+To clone the repository run the following from the command line:
 ```
 git clone https://github.com/josh-monto/weather_sent.git
 ```
 
-As mentioned above, you need to generate a bearer token for accessing the Twitter API (instructions can be found at https://developer.twitter.com/en/docs/authentication/oauth-2-0/bearer-tokens). A file named `bearer_token.txt` must be added to project's root folder and contain only the generated bearer token.
+I have included a bearer token for the Twitter API generated from a secondary developer account to ease the process of deploying the application. I don't expect rate limits to be hit, as the application is not a heavy user of data, but in case that does happen let me know.
 
-It is recommended to run in a virtual environment (https://docs.python.org/3.10/library/venv.html)
+From this point forward it is recommended to run a virtual environment (https://docs.python.org/3.10/library/venv.html). The application may not function otherwise.
 
-Now, with Node and NPM installed, repository cloned, `bearer_token.txt` added, and virtual environment activated, navigate to project root folder in command line and run the following commands to set up d3, install all packages, and download stopwords folder:
+Now, with Node and NPM installed (and activated), repository cloned, and virtual environment activated, navigate to the project root folder in the command line and run the following commands to install d3 and all Python packages:
 
 ```
-npm init
 npm install --save d3
-pip install Flask, nltk, tweepy, noaa_sdk, vaderSentiment, pandas, rank_bm25
-Python -m nltk.downloader stopwords
+pip install Flask nltk tweepy noaa_sdk vaderSentiment pandas rank_bm25
 ```
 
 Now run the project:
-I haven’t started FMECA stuff yet as I’m still working on the reliability, so you’ll be the first on this, though Sona White from Product Line will be joining tomorrow.
+
 ```
 Python -m flask run
 ```
 
-Navigate to http://127.0.0.1:5000 in browser window. The page may take up to 20 seconds to open.
+Once the message `Running on http://127.0.0.1:5000` appears, navigate to http://127.0.0.1:5000 in a browser window. The page may take up to 15 seconds to open.
 
-Once the page opens, you can select a city from the dropdown menu and click Submit once (the Submit button does not currently deactivate while code runs). Wait up to 20 seconds for page to update with information for selected city.
+Once the page opens, you can select a city from the dropdown menu and click Submit once (the Submit button does not currently deactivate while code runs). Wait up to 15 seconds for the page to update with information for the selected city.

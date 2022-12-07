@@ -34,15 +34,15 @@ def homepage():
     q = CityName.lower()
 
     geocode = {
-        "new york" : '11430',
+        #"new york" : '11430',
         "los angeles" : '90045',
         "chicago" : '60666',
-        "washington dc" : '22202',
+        #"washington dc" : '22202',
         "san francisco" : '94128',
         "boston" : '02128',
         "dallas" : '75261',
         "houston" : '77032',
-        "philadelphia" : '19113',
+        #"philadelphia" : '19113',
         "atlanta" : '30320',
         "miami" : '33142',
         "detroit" : '48174',
