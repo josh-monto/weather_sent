@@ -1,5 +1,4 @@
 # importing all necessary modules
-from nltk.corpus import stopwords
 import tweepy
 from noaa_sdk import NOAA
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -241,10 +240,19 @@ def homepage():
     data.SentVals = dict({'names' : ['comp_mean', 'pos', 'neu', 'neg'], 
                                 'values': [comp_mean, pos, neu, neg]})
 
-    # borrow some stopwords from nltk library and add a few others
-    stop_words = set(stopwords.words('english'))
-
-    more_stopwords = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
+    # borrow some stopwords from nltk library and add a few others giving problems
+    stop_words = {"i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your",
+        "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers",
+        "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what",
+        "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were",
+        "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a",
+        "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by",
+        "for", "with", "about", "against", "between", "into", "through", "during", "before", "after",
+        "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under",
+        "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all",
+        "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not",
+        "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don",
+        "should", "now", 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'co', 'new',
         'york', 'los', 'angeles', 'chicago', 'washington', 'dc', 'san', 'francisco', 'boston',
         'dallas', 'houston', 'philadelphia', 'atlanta', 'miami', 'detroit', 'phoenix', 'seattle', 
@@ -260,8 +268,6 @@ def homepage():
         'pennsylvania', 'pa', 'rhode island', 'ri', 'south', 'sc', 'sd', 'tennessee', 'tn', 'texas',
         'tx', 'utah', 'ut', 'vermont', 'vt', 'virginia', 'va', 'wa', 'west', 'wv', 'wisconsin', 'wi',
         'wyoming', 'wy', 'https', 'weather', 'will', 'great', '', ' '}
-
-    stop_words.update(more_stopwords)
 
     # gather all terms from all documents
     doc_terms = ' '.join(sentiments['document'])
